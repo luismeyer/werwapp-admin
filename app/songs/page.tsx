@@ -1,3 +1,4 @@
+import { getServerSession } from "next-auth";
 import { db } from "../../lib/db";
 import { songs } from "../../lib/db/schema";
 
@@ -9,8 +10,15 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { redirect } from "next/navigation";
 
 export default async function Songs() {
+  const session = await getServerSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   const songData = await db.select().from(songs);
 
   return (

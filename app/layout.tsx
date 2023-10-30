@@ -22,7 +22,7 @@ export default function RootLayout({
           <Navigation />
         </div>
 
-        <div className="pt-20">{children}</div>
+        <div className="pt-28">{children}</div>
       </body>
     </html>
   );

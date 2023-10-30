@@ -1,11 +1,32 @@
-import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { getServerSession } from "next-auth";
 
-export default function Home() {
+import Link from "next/link";
+import { redirect } from "next/navigation";
+
+export default async function Home() {
+  const session = await getServerSession();
+
+  if (!session) {
+    redirect("/login");
+  }
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <Link href="roles">roles</Link>
-      <Link href="songs">songs</Link>
-      <Link href="translations">translations</Link>
+    <main className="grid place-content-center gap-4">
+      <h1 className="text-3xl">You can view the following ressources</h1>
+      <div className="flex gap-2 justify-around">
+        <Link href="roles">
+          <Button variant="secondary">roles</Button>
+        </Link>
+
+        <Link href="translations">
+          <Button variant="secondary">translations</Button>
+        </Link>
+
+        <Link href="songs">
+          <Button variant="secondary">songs</Button>
+        </Link>
+      </div>
     </main>
   );
 }
