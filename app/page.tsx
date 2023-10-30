@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 export default async function Home() {
   const session = await getServerSession();
 
-  if (!session) {
+  if (!session?.user) {
     redirect("/login");
   }
 
@@ -15,17 +15,17 @@ export default async function Home() {
     <main className="grid place-content-center gap-4">
       <h1 className="text-3xl">You can view the following ressources</h1>
       <div className="flex gap-2 justify-around">
-        <Link href="roles">
-          <Button variant="secondary">roles</Button>
-        </Link>
+        <Button asChild variant="secondary">
+          <Link href="roles" />
+        </Button>
 
-        <Link href="translations">
-          <Button variant="secondary">translations</Button>
-        </Link>
+        <Button asChild variant="secondary">
+          <Link href="translations" />
+        </Button>
 
-        <Link href="songs">
-          <Button variant="secondary">songs</Button>
-        </Link>
+        <Button asChild variant="secondary">
+          <Link href="songs" />
+        </Button>
       </div>
     </main>
   );

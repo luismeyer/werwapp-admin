@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 export default async function Roles() {
   const session = await getServerSession();
 
-  if (!session) {
+  if (!session?.user) {
     redirect("/login");
   }
 

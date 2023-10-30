@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
-import { db } from "../../lib/db";
-import { songs } from "../../lib/db/schema";
+import { redirect } from "next/navigation";
 
+import { SongInput } from "@/components/song-input";
 import {
   Table,
   TableBody,
@@ -10,12 +10,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { redirect } from "next/navigation";
+
+import { db } from "../../lib/db";
+import { songs } from "../../lib/db/schema";
 
 export default async function Songs() {
   const session = await getServerSession();
 
-  if (!session) {
+  if (!session?.user) {
     redirect("/login");
   }
 
@@ -39,11 +41,52 @@ export default async function Songs() {
           {songData.map((song) => (
             <TableRow key={song.id}>
               <TableCell className="font-medium">{song.id}</TableCell>
-              <TableCell>{song.type}</TableCell>
-              <TableCell>{song.artist}</TableCell>
-              <TableCell>{song.title}</TableCell>
-              <TableCell>{song.songPage}</TableCell>
-              <TableCell>{song.songUrl}</TableCell>
+
+              <TableCell>
+                <SongInput
+                  type="select"
+                  songId={song.id}
+                  valueKey="type"
+                  defaultValue={song.type ?? "day"}
+                  options={["day", "night"]}
+                />
+              </TableCell>
+
+              <TableCell>
+                <SongInput
+                  type="text"
+                  songId={song.id}
+                  valueKey="artist"
+                  defaultValue={song.artist}
+                />
+              </TableCell>
+
+              <TableCell>
+                <SongInput
+                  type="text"
+                  songId={song.id}
+                  valueKey="title"
+                  defaultValue={song.title}
+                />
+              </TableCell>
+
+              <TableCell>
+                <SongInput
+                  type="url"
+                  songId={song.id}
+                  valueKey="songPage"
+                  defaultValue={song.songPage}
+                />
+              </TableCell>
+
+              <TableCell>
+                <SongInput
+                  type="url"
+                  songId={song.id}
+                  valueKey="songUrl"
+                  defaultValue={song.songUrl}
+                />
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

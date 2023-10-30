@@ -8,3 +8,5 @@ export const songs = mysqlTable("songs", {
   songPage: varchar("songPage", { length: 255 }).notNull(),
   songUrl: varchar("songUrl", { length: 255 }).notNull(),
 });
+
+export type Song = typeof songs.$inferSelect;
