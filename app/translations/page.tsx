@@ -9,6 +9,8 @@ export default async function Translations() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24"></main>
+    <main className="flex justify-center">
+      <h1 className="text-3xl">not implemented yet</h1>
+    </main>
   );
 }
