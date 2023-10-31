@@ -18,11 +18,8 @@ export default async function Songs() {
   const songData = await db.select().from(songs);
 
   return (
-    <main className="grid px-12">
-      <div className="grid gap-4">
-        <h1 className="text-center text-3xl">All Songs</h1>
-        <SongTable songData={songData} />
-      </div>
+    <main className="grid">
+      <SongTable songData={songData} />
 
       <Separator className="my-12" />
 

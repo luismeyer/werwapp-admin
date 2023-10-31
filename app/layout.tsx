@@ -23,7 +23,7 @@ export default function RootLayout({
           <Navigation />
         </div>
 
-        <div className="pt-28">{children}</div>
+        <div className="w-screen pt-28 px-12">{children}</div>
 
         <Toaster />
       </body>
