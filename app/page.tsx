@@ -16,15 +16,15 @@ export default async function Home() {
       <h1 className="text-3xl">You can view the following ressources</h1>
       <div className="flex gap-2 justify-around">
         <Button asChild variant="secondary">
-          <Link href="roles" />
+          <Link href="roles">roles</Link>
         </Button>
 
         <Button asChild variant="secondary">
-          <Link href="translations" />
+          <Link href="translations">translations</Link>
         </Button>
 
         <Button asChild variant="secondary">
-          <Link href="songs" />
+          <Link href="songs">songs</Link>
         </Button>
       </div>
     </main>
