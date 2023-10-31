@@ -1,11 +1,12 @@
 "use server";
 
-import { db } from "@/lib/db";
-import { songs } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import z, { ZodError } from "zod";
+
+import { db } from "@/lib/db";
+import { songs } from "@/lib/db/schema";
 
 const InputSchema = z.object({
   type: z.enum(["day", "night"]).optional(),
@@ -22,10 +23,9 @@ export async function updateSong(
   const session = await getServerSession();
 
   if (!session?.user) {
-    return;
+    return "Not logged in";
   }
 
-  // validate again for safety
   try {
     const values = InputSchema.parse(input);
 

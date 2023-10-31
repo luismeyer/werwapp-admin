@@ -31,7 +31,7 @@ type SongInputProps =
       options: string[];
     };
 
-export function SongInput(props: SongInputProps) {
+export function UpdateSongProperty(props: SongInputProps) {
   const { defaultValue, songId, valueKey, type } = props;
 
   const [loading, setLoading] = useState(false);
@@ -101,16 +101,14 @@ export function SongInput(props: SongInputProps) {
   }
 
   return (
-    <>
-      <Input
-        type={type}
-        name={valueKey}
-        onKeyDown={handleKeyDown}
-        onBlur={(e) => submitUpdate(e.target.value)}
-        disabled={loading}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    </>
+    <Input
+      type={type}
+      name={valueKey}
+      onKeyDown={handleKeyDown}
+      onBlur={(e) => submitUpdate(e.target.value)}
+      disabled={loading}
+      value={value}
+      onChange={(e) => setValue(e.target.value)}
+    />
   );
 }
