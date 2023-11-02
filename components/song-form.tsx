@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "./ui/select";
 import { Button } from "./ui/button";
-import { UploadCloudIcon, Loader } from "lucide-react";
+import { UploadIcon, Loader } from "lucide-react";
 import { useFormState, useFormStatus } from "react-dom";
 import { useEffect, useRef } from "react";
 import { toast } from "./ui/use-toast";
@@ -21,7 +21,7 @@ function Submit() {
 
   return (
     <Button className="self-end flex gap-2 px-8" type="submit">
-      {pending ? <Loader /> : <UploadCloudIcon />}
+      {pending ? <Loader /> : <UploadIcon />}
       Create
     </Button>
   );

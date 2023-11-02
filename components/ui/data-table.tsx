@@ -3,6 +3,7 @@
 import {
   ColumnDef,
   SortingState,
+  Table as ReactTable,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
@@ -19,29 +20,39 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "./button";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Input } from "./input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  initialSortingState?: SortingState;
+  dynamicSize?: boolean;
+  pagination?: boolean;
+  topRightSlot?: (props: { table: ReactTable<TData> }) => React.ReactElement;
+  globelFilterPlaceholder?: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
+  initialSortingState,
+  dynamicSize,
+  topRightSlot: TopRightSlot,
+  pagination,
+  globelFilterPlaceholder,
 }: DataTableProps<TData, TValue>) {
-  const [sorting, setSorting] = useState<SortingState>([
-    { desc: true, id: "id" },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>(
+    initialSortingState ?? []
+  );
+
   const [globalFilter, setGlobalFilter] = useState("");
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
+    getPaginationRowModel: pagination ? getPaginationRowModel() : undefined,
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
@@ -50,33 +61,16 @@ export function DataTable<TData, TValue>({
 
   return (
     <div>
-      <div className="flex items-center pb-4 justify-between">
+      <div className="flex items-center pb-2 justify-between">
         <Input
-          placeholder="Filter songs..."
+          key="global-filter"
+          placeholder={globelFilterPlaceholder}
           value={globalFilter}
           onChange={({ target }) => setGlobalFilter(target.value)}
           className="max-w-sm"
         />
 
-        <div className="flex gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.previousPage()}
-            disabled={!table.getCanPreviousPage()}
-          >
-            Previous
-          </Button>
-
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => table.nextPage()}
-            disabled={!table.getCanNextPage()}
-          >
-            Next
-          </Button>
-        </div>
+        {TopRightSlot && <TopRightSlot table={table} />}
       </div>
       <div className="rounded-md border">
         <Table>
@@ -106,8 +100,15 @@ export function DataTable<TData, TValue>({
                   key={row.id}
                   data-state={row.getIsSelected() && "selected"}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                  {row.getVisibleCells().map((cell, _index, cells) => (
+                    <TableCell
+                      key={cell.id}
+                      style={
+                        dynamicSize
+                          ? undefined
+                          : { width: `${100 / cells.length}%` }
+                      }
+                    >
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

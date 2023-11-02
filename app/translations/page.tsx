@@ -2,7 +2,8 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { list, put } from "@vercel/blob";
+import { list } from "@vercel/blob";
+import { TranslationTable } from "@/components/translation-table";
 
 export default async function Translations() {
   const session = await getServerSession();
@@ -36,10 +37,15 @@ export default async function Translations() {
 
         {translations.map((locale, index) => (
           <TabsContent
+            className="mt-4"
             key={blobs[index].pathname}
             value={blobs[index].pathname}
           >
-            {JSON.stringify(locale, null, 4)}
+            <TranslationTable
+              data={locale}
+              pathname={blobs[index].pathname}
+              url={blobs[index].url}
+            />
           </TabsContent>
         ))}
       </Tabs>

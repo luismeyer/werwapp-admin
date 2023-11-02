@@ -1,27 +1,29 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
-import { DataTable } from "./ui/data-table";
-import type { Song } from "@/lib/db/schema";
-import { UpdateSongProperty } from "./update-song-property";
 import {
   ArrowUpDown,
   MoreHorizontal,
-  PlayCircleIcon,
   PauseCircleIcon,
+  PlayCircleIcon,
   TrashIcon,
 } from "lucide-react";
+import { useRef, useState } from "react";
+
+import { deleteSong } from "@/app/api/delete-song";
+import { ColumnDef, Table } from "@tanstack/react-table";
+
 import { Button } from "./ui/button";
+import { DataTable } from "./ui/data-table";
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { useRef, useState } from "react";
-import { deleteSong } from "@/app/api/delete-song";
 import { toast } from "./ui/use-toast";
+import { UpdateSongProperty } from "./update-song-property";
 
+import type { Song } from "@/lib/db/schema";
 type DrowDownAudioMenuItemProps = {
   url: string;
 };
@@ -191,5 +193,39 @@ type SongTableProps = {
 };
 
 export function SongTable({ songData }: SongTableProps) {
-  return <DataTable columns={COLUMNS} data={songData} />;
+  function Pagination(props: { table: Table<Song> }) {
+    return (
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => props.table.previousPage()}
+          disabled={!props.table.getCanPreviousPage()}
+        >
+          Previous
+        </Button>
+
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => props.table.nextPage()}
+          disabled={!props.table.getCanNextPage()}
+        >
+          Next
+        </Button>
+      </div>
+    );
+  }
+
+  return (
+    <DataTable
+      columns={COLUMNS}
+      data={songData}
+      initialSortingState={[{ desc: true, id: "id" }]}
+      topRightSlot={Pagination}
+      dynamicSize
+      pagination
+      globelFilterPlaceholder="Filter songs..."
+    />
+  );
 }
