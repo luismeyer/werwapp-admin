@@ -2,11 +2,10 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
 import { SongForm } from "@/components/song-form";
-import { SongTable } from "@/components/song-table";
 
-import { db } from "../../lib/db";
-import { songs } from "../../lib/db/schema";
 import { Separator } from "@/components/ui/separator";
+import { Suspense } from "react";
+import { SongData } from "@/components/song-data";
 
 export default async function Songs() {
   const session = await getServerSession();
@@ -15,15 +14,15 @@ export default async function Songs() {
     redirect("/login");
   }
 
-  const songData = await db.select().from(songs);
-
   return (
     <main className="grid">
-      <SongTable songData={songData} />
+      <SongForm />
 
       <Separator className="my-12" />
 
-      <SongForm />
+      <Suspense>
+        <SongData />
+      </Suspense>
     </main>
   );
 }

@@ -2,8 +2,11 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
-import { list } from "@vercel/blob";
-import { TranslationTable } from "@/components/translation-table";
+import { TranslationTab } from "@/components/translation-tab";
+import { Suspense } from "react";
+import { Spinner } from "@/components/ui/spinner";
+
+const LOCALES = ["de", "en"];
 
 export default async function Translations() {
   const session = await getServerSession();
@@ -12,40 +15,28 @@ export default async function Translations() {
     redirect("/login");
   }
 
-  const { blobs } = await list({
-    prefix: "translations/",
-  });
-
-  const translations = await Promise.all(
-    blobs.map((locale) =>
-      fetch(locale.url)
-        .then((res): Promise<Record<string, string>> => res.json())
-        .catch(() => ({}))
-    )
-  );
-
   return (
     <main className="grid">
-      <Tabs defaultValue={blobs[0].pathname} className="w-full">
+      <Tabs defaultValue={LOCALES[0]} className="w-full">
         <TabsList className="grid w-full grid-cols-2">
-          {blobs.map((locale) => (
-            <TabsTrigger key={locale.pathname} value={locale.pathname}>
-              {locale.pathname}
+          {LOCALES.map((locale) => (
+            <TabsTrigger key={locale} value={locale}>
+              {locale}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        {translations.map((locale, index) => (
-          <TabsContent
-            className="mt-4"
-            key={blobs[index].pathname}
-            value={blobs[index].pathname}
-          >
-            <TranslationTable
-              data={locale}
-              pathname={blobs[index].pathname}
-              url={blobs[index].url}
-            />
+        {LOCALES.map((locale) => (
+          <TabsContent className="mt-4" key={locale} value={locale}>
+            <Suspense
+              fallback={
+                <div className="flex justify-center">
+                  <Spinner size={50} />
+                </div>
+              }
+            >
+              <TranslationTab locale={locale} />
+            </Suspense>
           </TabsContent>
         ))}
       </Tabs>

@@ -47,7 +47,7 @@ export function SongForm() {
   }, [state]);
 
   return (
-    <div className="grid pb-32">
+    <div className="grid">
       <form className="grid gap-4" action={formAction} ref={formRef}>
         <h2 className="text-3xl text-center">Create a new song</h2>
 

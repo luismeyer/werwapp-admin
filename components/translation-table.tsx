@@ -1,6 +1,6 @@
 "use client";
 
-import { ColumnDef } from "@tanstack/react-table";
+import { ColumnDef, Table } from "@tanstack/react-table";
 import { ArrowUpDown, UploadIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { DataTable } from "./ui/data-table";
@@ -39,6 +39,8 @@ export function TranslationTable({
       ),
     [data]
   );
+
+  const [rows, setRows] = useState(Object.values(initialData));
 
   const persistData = useRef(initialData);
 
@@ -89,7 +91,7 @@ export function TranslationTable({
 
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit() {
+  async function handleSubmit(table: Table<Translation>) {
     const values = Object.values(persistData.current);
 
     const translations = values.reduce(
@@ -98,14 +100,18 @@ export function TranslationTable({
     );
 
     setLoading(true);
+
     await updateTranslations(pathname, translations);
+
+    table.setGlobalFilter("");
     setLoading(false);
+    setRows(Object.values(persistData.current));
   }
 
   return (
     <DataTable
       columns={columns}
-      topRightSlot={() => (
+      topRightSlot={({ table }) => (
         <div className="flex gap-2">
           <Button asChild variant="ghost">
             <Link target="_blank" href={`/api/blob?url=${url}`}>
@@ -113,13 +119,13 @@ export function TranslationTable({
             </Link>
           </Button>
 
-          <Button onClick={handleSubmit} className="flex gap-2">
+          <Button onClick={() => handleSubmit(table)} className="flex gap-2">
             {loading ? <Spinner size={20} /> : <UploadIcon size={20} />}
             Submit
           </Button>
         </div>
       )}
-      data={Object.values(initialData)}
+      data={rows}
       initialSortingState={[{ id: "key", desc: false }]}
       globelFilterPlaceholder="Search for a key or value"
     />
