@@ -15,10 +15,12 @@ const InputSchema = z.object({
   songUrl: z.string().url(),
 });
 
-type State = {
-  timestamp: number;
-  error?: string;
-};
+type State =
+  | undefined
+  | {
+      timestamp: number;
+      error?: string;
+    };
 
 function createResponse(error?: string): State {
   return { timestamp: Date.now(), error };

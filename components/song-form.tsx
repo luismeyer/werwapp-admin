@@ -10,46 +10,45 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
-import { Button } from "./ui/button";
-import { UploadIcon, Loader } from "lucide-react";
-import { useFormState, useFormStatus } from "react-dom";
+import { useFormState } from "react-dom";
 import { useEffect, useRef } from "react";
 import { toast } from "./ui/use-toast";
-
-function Submit() {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button className="self-end flex gap-2 px-8" type="submit">
-      {pending ? <Loader /> : <UploadIcon />}
-      Create
-    </Button>
-  );
-}
+import { Submit } from "./submit";
 
 export function SongForm() {
-  const [state, formAction] = useFormState(createSong, {
-    timestamp: Date.now(),
-  });
+  const [state, formAction] = useFormState(createSong, undefined);
+
   const formRef = useRef<HTMLFormElement>(null);
 
   useEffect(() => {
-    if (!state.error) {
-      formRef.current?.reset();
+    if (!state) {
       return;
     }
 
-    toast({
-      variant: "destructive",
-      title: "Uh oh! Something went wrong.",
-      description: state.error,
-    });
+    if (state.error) {
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+        description: state.error,
+      });
+    } else {
+      formRef.current?.reset();
+
+      toast({
+        variant: "default",
+        title: "Song created!",
+        description: `Created new Song.`,
+      });
+    }
   }, [state]);
 
   return (
     <div className="grid">
       <form className="grid gap-4" action={formAction} ref={formRef}>
-        <h2 className="text-3xl text-center">Create a new song</h2>
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl">Create a new song</h2>
+          <Submit />
+        </div>
 
         <div className="flex flex-col gap-2">
           <div className="flex gap-2">
@@ -78,8 +77,6 @@ export function SongForm() {
 
             <Input name="songUrl" placeholder="song url" required />
           </div>
-
-          <Submit />
         </div>
       </form>
     </div>

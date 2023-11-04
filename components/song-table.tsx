@@ -223,7 +223,6 @@ export function SongTable({ songData }: SongTableProps) {
       data={songData}
       initialSortingState={[{ desc: true, id: "id" }]}
       topRightSlot={Pagination}
-      dynamicSize
       pagination
       globelFilterPlaceholder="Filter songs..."
     />

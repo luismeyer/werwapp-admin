@@ -1,46 +1,61 @@
 "use client";
 
+import { ArrowUpDown, MoreHorizontal, SaveIcon, TrashIcon } from "lucide-react";
+import Link from "next/link";
+import { useMemo, useRef, useState } from "react";
+
+import { updateTranslations } from "@/app/api/update-translations";
 import { ColumnDef, Table } from "@tanstack/react-table";
-import { ArrowUpDown, UploadIcon } from "lucide-react";
+
 import { Button } from "./ui/button";
 import { DataTable } from "./ui/data-table";
-import { Input } from "./ui/input";
-import { Textarea } from "./ui/textarea";
-import { useMemo, useRef, useState } from "react";
-import { updateTranslations } from "@/app/api/update-translations";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
 import { Spinner } from "./ui/spinner";
-import Link from "next/link";
+import { Textarea } from "./ui/textarea";
+import { toast } from "./ui/use-toast";
 
 type TranslationTableProps = {
   data: Record<string, string>;
-  pathname: string;
-  url: string;
+  newTranslations: Record<string, string>;
+  locale: string;
 };
 
-type Translation = {
+export type Translation = {
   id: number;
   key: string;
   value: string;
 };
 
+function translationsToRows(
+  translations: Record<string, string>
+): Record<number, Translation> {
+  return Object.entries(translations).reduce(
+    (acc, [key, value], index) => ({
+      ...acc,
+      [index]: { key, value, id: index },
+    }),
+    {}
+  );
+}
+
 export function TranslationTable({
   data,
-  pathname,
-  url,
+  locale,
+  newTranslations,
 }: TranslationTableProps) {
-  const initialData: Record<number, Translation> = useMemo(
-    () =>
-      Object.entries(data).reduce(
-        (acc, [key, value], index) => ({
-          ...acc,
-          [index]: { key, value, id: index },
-        }),
-        {}
-      ),
-    [data]
-  );
+  const initialData = useMemo(() => translationsToRows(data), [data]);
 
   const [rows, setRows] = useState(Object.values(initialData));
+
+  const newRows = useMemo(
+    () => Object.values(translationsToRows(newTranslations)),
+    [newTranslations]
+  );
 
   const persistData = useRef(initialData);
 
@@ -48,7 +63,7 @@ export function TranslationTable({
     {
       accessorKey: "key",
       cell: ({ row }) => (
-        <Input
+        <Textarea
           defaultValue={row.original.key}
           onChange={({ target }) => {
             persistData.current[row.original.id].key = target.value;
@@ -87,6 +102,42 @@ export function TranslationTable({
         </Button>
       ),
     },
+    {
+      id: "actions",
+      cell: ({ row: { original } }) => {
+        async function handleDeleteClick() {
+          delete persistData.current[original.id];
+          setRows(Object.values(persistData.current));
+
+          toast({
+            variant: "default",
+            title: "Removed Translations!",
+            description: `Make sure to commit the changes!`,
+          });
+        }
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="w-full p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                className="flex gap-1"
+                onClick={handleDeleteClick}
+              >
+                <TrashIcon size={16} />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
   ];
 
   const [loading, setLoading] = useState(false);
@@ -101,11 +152,12 @@ export function TranslationTable({
 
     setLoading(true);
 
-    await updateTranslations(pathname, translations);
+    await updateTranslations(locale, translations);
 
     table.setGlobalFilter("");
+
     setLoading(false);
-    setRows(Object.values(persistData.current));
+    setRows(values);
   }
 
   return (
@@ -114,18 +166,18 @@ export function TranslationTable({
       topRightSlot={({ table }) => (
         <div className="flex gap-2">
           <Button asChild variant="ghost">
-            <Link target="_blank" href={`/api/blob?url=${url}`}>
+            <Link target="_blank" href={`/api/blob?locale=${locale}`}>
               view raw json
             </Link>
           </Button>
 
           <Button onClick={() => handleSubmit(table)} className="flex gap-2">
-            {loading ? <Spinner size={20} /> : <UploadIcon size={20} />}
-            Submit
+            {loading ? <Spinner size={20} /> : <SaveIcon size={20} />}
+            Commit
           </Button>
         </div>
       )}
-      data={rows}
+      data={[...newRows, ...rows]}
       initialSortingState={[{ id: "key", desc: false }]}
       globelFilterPlaceholder="Search for a key or value"
     />

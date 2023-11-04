@@ -1,11 +1,15 @@
+import { getTranslations } from "../get-translations";
+
 export async function GET(request: Request) {
   const url = new URL(request.url);
 
-  const blob = url.searchParams.get("url");
+  const locale = url.searchParams.get("locale");
 
-  if (!blob) {
-    return Response.json({ error: "No blob URL provided" }, { status: 400 });
+  if (!locale) {
+    return Response.json({ error: "No locale provided" }, { status: 400 });
   }
 
-  return Response.json(await fetch(blob).then((res) => res.json()));
+  const blob = await getTranslations(locale);
+
+  return Response.json(blob);
 }

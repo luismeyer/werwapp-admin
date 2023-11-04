@@ -8,7 +8,7 @@ import { Spinner } from "@/components/ui/spinner";
 
 const LOCALES = ["de", "en"];
 
-export default async function Translations() {
+export default async function TranslationsPage() {
   const session = await getServerSession();
 
   if (!session?.user) {
@@ -27,16 +27,18 @@ export default async function Translations() {
         </TabsList>
 
         {LOCALES.map((locale) => (
-          <TabsContent className="mt-4" key={locale} value={locale}>
-            <Suspense
-              fallback={
-                <div className="flex justify-center">
-                  <Spinner size={50} />
-                </div>
-              }
-            >
-              <TranslationTab locale={locale} />
-            </Suspense>
+          <TabsContent className="grid m-0" key={locale} value={locale}>
+            <div className="mt-4">
+              <Suspense
+                fallback={
+                  <div className="flex justify-center">
+                    <Spinner size={50} />
+                  </div>
+                }
+              >
+                <TranslationTab locale={locale} />
+              </Suspense>
+            </div>
           </TabsContent>
         ))}
       </Tabs>

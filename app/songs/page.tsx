@@ -7,7 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import { Suspense } from "react";
 import { SongData } from "@/components/song-data";
 
-export default async function Songs() {
+export default async function SongsPage() {
   const session = await getServerSession();
 
   if (!session?.user) {

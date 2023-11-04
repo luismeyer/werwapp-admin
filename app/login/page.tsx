@@ -3,7 +3,7 @@ import { getServerSession } from "next-auth";
 
 import { redirect } from "next/navigation";
 
-export default async function Login() {
+export default async function LoginPage() {
   const session = await getServerSession();
 
   if (session) {

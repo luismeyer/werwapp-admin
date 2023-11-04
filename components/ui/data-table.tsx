@@ -1,16 +1,6 @@
 "use client";
 
-import {
-  ColumnDef,
-  SortingState,
-  Table as ReactTable,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
+import React, { useState } from "react";
 
 import {
   Table,
@@ -20,14 +10,24 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import React, { useState } from "react";
+import {
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  Table as ReactTable,
+  useReactTable,
+} from "@tanstack/react-table";
+
 import { Input } from "./input";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   initialSortingState?: SortingState;
-  dynamicSize?: boolean;
   pagination?: boolean;
   topRightSlot?: (props: { table: ReactTable<TData> }) => React.ReactElement;
   globelFilterPlaceholder?: string;
@@ -37,7 +37,6 @@ export function DataTable<TData, TValue>({
   columns,
   data,
   initialSortingState,
-  dynamicSize,
   topRightSlot: TopRightSlot,
   pagination,
   globelFilterPlaceholder,
@@ -102,14 +101,7 @@ export function DataTable<TData, TValue>({
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell, _index, cells) => (
-                    <TableCell
-                      key={cell.id}
-                      style={
-                        dynamicSize
-                          ? undefined
-                          : { width: `${100 / cells.length}%` }
-                      }
-                    >
+                    <TableCell key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
                         cell.getContext()

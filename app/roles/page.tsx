@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 
-export default async function Roles() {
+export default async function RolesPage() {
   const session = await getServerSession();
 
   if (!session?.user) {
