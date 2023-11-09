@@ -152,12 +152,12 @@ export function TranslationTable({
 
     setLoading(true);
 
-    await updateTranslations(locale, translations);
+    await updateTranslations(locale, { ...translations, ...newTranslations });
 
     table.setGlobalFilter("");
 
-    setLoading(false);
     setRows(values);
+    setLoading(false);
   }
 
   return (

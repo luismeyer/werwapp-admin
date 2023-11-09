@@ -29,13 +29,7 @@ export default async function TranslationsPage() {
         {LOCALES.map((locale) => (
           <TabsContent className="grid m-0" key={locale} value={locale}>
             <div className="mt-4">
-              <Suspense
-                fallback={
-                  <div className="flex justify-center">
-                    <Spinner size={50} />
-                  </div>
-                }
-              >
+              <Suspense>
                 <TranslationTab locale={locale} />
               </Suspense>
             </div>
