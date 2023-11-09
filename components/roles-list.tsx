@@ -14,6 +14,10 @@ import {
 import { Switch } from "./ui/switch";
 import { Label } from "./ui/label";
 import { useState } from "react";
+import { updateRoles } from "@/app/api/update-roles";
+import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
+import { SaveIcon } from "lucide-react";
 
 type RolesCardProps = {
   combineOptions: string[];
@@ -137,6 +141,7 @@ function RolesCard({
           <Select
             name="combinedWith"
             required
+            defaultValue="none"
             value={role.combinedWith}
             onValueChange={(value) =>
               onRoleChange({
@@ -150,6 +155,9 @@ function RolesCard({
             </SelectTrigger>
 
             <SelectContent>
+              <SelectItem key="none" value="none">
+                none
+              </SelectItem>
               {combineOptions.map((option) => (
                 <SelectItem key={option} value={option}>
                   {option}
@@ -183,12 +191,10 @@ type RolesListProps = {
 };
 
 export function RolesList({ roles }: RolesListProps): JSX.Element {
-  const playerRoles = roles.filter(
-    (role): role is PlayerRoleDef => role.type === "player"
-  );
+  const [loading, setLoading] = useState(false);
 
   const [rolesState, setRolesState] = useState(
-    playerRoles.reduce<Record<string, PlayerRoleDef>>(
+    roles.reduce<Record<string, RoleDef>>(
       (acc, role) => ({
         ...acc,
         [role.name]: role,
@@ -197,23 +203,45 @@ export function RolesList({ roles }: RolesListProps): JSX.Element {
     )
   );
 
+  const playerRoles = Object.values(rolesState).filter(
+    (role): role is PlayerRoleDef => role.type === "player"
+  );
+
   const updateRole = (id: string, role: Partial<PlayerRoleDef>) => {
-    setRolesState((prev) => ({
-      ...prev,
-      [id]: { ...prev[id], ...role },
-    }));
+    setRolesState((prev) => {
+      const { [id]: prevValue } = prev;
+
+      return {
+        ...prev,
+        [id]:
+          prevValue.type === "player" ? { ...prevValue, ...role } : prevValue,
+      };
+    });
+  };
+
+  const commit = async () => {
+    setLoading(true);
+    await updateRoles(Object.values(rolesState));
+    setLoading(false);
   };
 
   return (
-    <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-      {Object.entries(rolesState).map(([key, role]) => (
-        <RolesCard
-          key={key}
-          role={role}
-          combineOptions={playerRoles.map(({ name }) => name)}
-          onRoleChange={(role) => updateRole(key, role)}
-        />
-      ))}
+    <div className="flex flex-col gap-6">
+      <Button onClick={() => commit()} className="flex gap-2 self-end">
+        {loading ? <Spinner size={20} /> : <SaveIcon size={20} />}
+        Commit
+      </Button>
+
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+        {Object.entries(rolesState).map(([key, role]) => (
+          <RolesCard
+            key={key}
+            role={role}
+            combineOptions={playerRoles.map(({ name }) => name)}
+            onRoleChange={(role) => updateRole(key, role)}
+          />
+        ))}
+      </div>
     </div>
   );
 }
