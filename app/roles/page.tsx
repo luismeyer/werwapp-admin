@@ -1,5 +1,10 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
+import { RolesData } from "@/components/roles-data";
+import { Suspense } from "react";
+import { readFile, readdir } from "fs/promises";
+import { resolve } from "path";
+import { put } from "@vercel/blob";
 
 export default async function RolesPage() {
   const session = await getServerSession();
@@ -10,7 +15,9 @@ export default async function RolesPage() {
 
   return (
     <main className="flex justify-center">
-      <h1 className="text-3xl">not implemented yet</h1>
+      <Suspense>
+        <RolesData />
+      </Suspense>
     </main>
   );
 }
