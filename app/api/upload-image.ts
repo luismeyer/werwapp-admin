@@ -17,7 +17,7 @@ export async function uploadImage(form: FormData) {
     return;
   }
 
-  const { url } = await put(name.toString(), image, {
+  const { url } = await put(`roles/${name.toString()}`, image, {
     access: "public",
     addRandomSuffix: false,
     cacheControlMaxAge: 0,
