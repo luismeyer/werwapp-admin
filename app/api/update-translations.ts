@@ -22,4 +22,5 @@ export async function updateTranslations(
   });
 
   revalidatePath("/translations");
+  revalidatePath("/api/translations");
 }

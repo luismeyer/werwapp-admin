@@ -19,4 +19,5 @@ export async function updateRoles(roles: RoleDefRecord) {
   });
 
   revalidatePath("/roles");
+  revalidatePath("/api/roles");
 }
