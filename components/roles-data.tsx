@@ -1,11 +1,9 @@
-import { getBlobUrl } from "@/app/api/get-blob-url";
 import { RoleDefRecordSchema } from "@/app/api/roles";
 import { RolesList } from "./roles-list";
+import { getRoles } from "@/app/api/get-roles";
 
 export async function RolesData() {
-  const data = await fetch(getBlobUrl("roles.json"), {
-    next: { revalidate: false },
-  }).then((res) => res.json());
+  const data = await getRoles();
 
   const roles = RoleDefRecordSchema.parse(data);
 
