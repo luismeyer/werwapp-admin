@@ -15,7 +15,7 @@ export async function updateTranslations(
     return;
   }
 
-  await put(await getPathname(locale), JSON.stringify(translations, null, 2), {
+  await put(getPathname(locale), JSON.stringify(translations, null, 2), {
     access: "public",
     addRandomSuffix: false,
     cacheControlMaxAge: 0,

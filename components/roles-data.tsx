@@ -1,5 +1,5 @@
 import { getBlobUrl } from "@/app/api/get-blob-url";
-import { RoleDefResponseSchema } from "@/app/api/roles";
+import { RoleDefRecordSchema } from "@/app/api/roles";
 import { RolesList } from "./roles-list";
 
 export async function RolesData() {
@@ -7,7 +7,7 @@ export async function RolesData() {
     next: { revalidate: false },
   }).then((res) => res.json());
 
-  const { roles } = RoleDefResponseSchema.parse(data);
+  const roles = RoleDefRecordSchema.parse(data);
 
   return (
     <div>

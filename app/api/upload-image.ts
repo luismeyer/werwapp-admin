@@ -2,21 +2,26 @@
 
 import { put } from "@vercel/blob";
 import { getServerSession } from "next-auth";
-import { revalidatePath } from "next/cache";
-import { RoleDefRecord } from "./roles";
 
-export async function updateRoles(roles: RoleDefRecord) {
+export async function uploadImage(form: FormData) {
+  const name = form.get("name");
+  const image = form.get("image");
+
+  if (!name || !image) {
+    return;
+  }
+
   const session = await getServerSession();
 
   if (!session?.user) {
     return;
   }
 
-  await put("roles.json", JSON.stringify(roles, null, 2), {
+  const { url } = await put(name.toString(), image, {
     access: "public",
     addRandomSuffix: false,
     cacheControlMaxAge: 0,
   });
 
-  revalidatePath("/roles");
+  return url;
 }

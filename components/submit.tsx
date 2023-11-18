@@ -12,7 +12,7 @@ type SubmitProps = {
 };
 
 export function Submit({
-  label = "Create",
+  label = "create",
   variant,
   icon = "Upload",
 }: SubmitProps) {

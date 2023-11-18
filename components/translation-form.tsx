@@ -37,7 +37,7 @@ export function TranslationForm({ onSubmit }: TranslationFormProps) {
       <h2 className="text-xl">Create a new translation</h2>
 
       <div className="flex justify-end">
-        <Submit variant="secondary" label="Add" icon="Plus" />
+        <Submit variant="secondary" label="add" icon="Plus" />
       </div>
 
       <Textarea

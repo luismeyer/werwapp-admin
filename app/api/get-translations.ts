@@ -1,13 +1,11 @@
-"use server";
-
 import { getBlobUrl } from "./get-blob-url";
 
-export async function getPathname(locale: string) {
+export function getPathname(locale: string) {
   return `translations/${locale}.json`;
 }
 
 export async function getTranslations(locale: string) {
-  const pathname = await getPathname(locale);
+  const pathname = getPathname(locale);
   const url = getBlobUrl(pathname);
 
   return fetch(url, { next: { revalidate: false } })

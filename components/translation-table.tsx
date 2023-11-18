@@ -165,15 +165,15 @@ export function TranslationTable({
       columns={columns}
       topRightSlot={({ table }) => (
         <div className="flex gap-2">
-          <Button asChild variant="ghost">
-            <Link target="_blank" href={`/api/blob?locale=${locale}`}>
+          <Button asChild variant="secondary">
+            <Link target="_blank" href={`/api/blob/translations/${locale}`}>
               view raw json
             </Link>
           </Button>
 
           <Button onClick={() => handleSubmit(table)} className="flex gap-2">
             {loading ? <Spinner size={20} /> : <SaveIcon size={20} />}
-            Commit
+            commit
           </Button>
         </div>
       )}

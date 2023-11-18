@@ -1,246 +1,125 @@
 "use client";
 
-import { PlayerRoleDef, RoleDef } from "@/app/api/roles";
-import { Card, CardHeader, CardTitle, CardContent } from "./ui/card";
-import Image from "next/image";
-import { Input } from "./ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { Switch } from "./ui/switch";
-import { Label } from "./ui/label";
+import { PlusIcon, SaveIcon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
+
+import { PlayerRoleDef, RoleDef } from "@/app/api/roles";
 import { updateRoles } from "@/app/api/update-roles";
+
 import { Button } from "./ui/button";
 import { Spinner } from "./ui/spinner";
-import { SaveIcon } from "lucide-react";
+import { RolesCard } from "./roles-card";
+import { toast } from "./ui/use-toast";
 
-type RolesCardProps = {
-  combineOptions: string[];
-  role: RoleDef;
-  onRoleChange: (role: Partial<PlayerRoleDef>) => void;
-};
-
-function RolesCard({
-  role,
-  combineOptions,
-  onRoleChange,
-}: RolesCardProps): JSX.Element | null {
-  if (role.type === "util") {
-    return null;
-  }
-
-  return (
-    <Card className="overflow-hidden">
-      <input className="hidden" type="file" name="image" />
-      <Image
-        alt={`image of ${role.name}`}
-        src={role.image}
-        width={300}
-        height={300}
-      />
-
-      <CardHeader>
-        <CardTitle className="grid gap-2">
-          <div>
-            <Label htmlFor="name">Name</Label>
-            <Input
-              id="name"
-              value={role.name}
-              placeholder="name"
-              onChange={(e) => onRoleChange({ ...role, name: e.target.value })}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label htmlFor="addable">Can be added by user</Label>
-            <Switch
-              id="addable"
-              checked={role.addable}
-              onCheckedChange={(addable) => onRoleChange({ ...role, addable })}
-            />
-          </div>
-
-          <div className="flex items-center justify-between">
-            <Label htmlFor="evil">Is evil role</Label>
-            <Switch
-              id="evil"
-              checked={role.isEvil}
-              onCheckedChange={(isEvil) => onRoleChange({ ...role, isEvil })}
-            />
-          </div>
-        </CardTitle>
-      </CardHeader>
-
-      <CardContent className="grid gap-2">
-        <div>
-          <Label htmlFor="prefix">Gender prefix</Label>
-          <Select
-            name="prefix"
-            required
-            value={role.prefix}
-            onValueChange={(value) =>
-              onRoleChange({
-                ...role,
-                prefix: value as PlayerRoleDef["prefix"],
-              })
-            }
-          >
-            <SelectTrigger id="prefix">
-              <SelectValue placeholder="prefix" />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectItem key="feminimum" value="feminimum">
-                feminimum
-              </SelectItem>
-              <SelectItem key="masculinum" value="masculinum">
-                masculinum
-              </SelectItem>
-              <SelectItem key="neutrum" value="neutrum">
-                neutrum
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="state">Active at</Label>
-          <Select
-            name="state"
-            required
-            value={role.state}
-            onValueChange={(value) =>
-              onRoleChange({
-                ...role,
-                state: value as PlayerRoleDef["state"],
-              })
-            }
-          >
-            <SelectTrigger id="state">
-              <SelectValue placeholder="state" />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectItem key="day" value="day">
-                day
-              </SelectItem>
-              <SelectItem key="night" value="night">
-                night
-              </SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="combinedWith">Is combined with</Label>
-          <Select
-            name="combinedWith"
-            required
-            defaultValue="none"
-            value={role.combinedWith}
-            onValueChange={(value) =>
-              onRoleChange({
-                ...role,
-                combinedWith: value as PlayerRoleDef["combinedWith"],
-              })
-            }
-          >
-            <SelectTrigger id="combinedWith">
-              <SelectValue placeholder="combinedWith" />
-            </SelectTrigger>
-
-            <SelectContent>
-              <SelectItem key="none" value="none">
-                none
-              </SelectItem>
-              {combineOptions.map((option) => (
-                <SelectItem key={option} value={option}>
-                  {option}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Label htmlFor="activeNights">Active nights</Label>
-          <Input
-            id="activeNights"
-            placeholder="activeNights"
-            value={role.activeNights ? role.activeNights.join(",") : "All"}
-            onChange={(e) =>
-              onRoleChange({
-                ...role,
-                activeNights: e.target.value.split(",").map(Number),
-              })
-            }
-          />
-        </div>
-      </CardContent>
-    </Card>
-  );
-}
+type RolesState = Record<string, RoleDef>;
 
 type RolesListProps = {
-  roles: RoleDef[];
+  roles: RolesState;
 };
 
 export function RolesList({ roles }: RolesListProps): JSX.Element {
   const [loading, setLoading] = useState(false);
 
-  const [rolesState, setRolesState] = useState(
-    roles.reduce<Record<string, RoleDef>>(
-      (acc, role) => ({
-        ...acc,
-        [role.name]: role,
-      }),
-      {}
-    )
-  );
+  const [rolesState, setRolesState] = useState(roles);
 
   const playerRoles = Object.values(rolesState).filter(
     (role): role is PlayerRoleDef => role.type === "player"
   );
 
-  const updateRole = (id: string, role: Partial<PlayerRoleDef>) => {
+  const updateRole = (id: string, role: Partial<RoleDef>) => {
     setRolesState((prev) => {
       const { [id]: prevValue } = prev;
 
       return {
         ...prev,
-        [id]:
-          prevValue.type === "player" ? { ...prevValue, ...role } : prevValue,
+        [id]: { ...prevValue, ...role } as PlayerRoleDef,
       };
     });
+
+    toast({
+      variant: "default",
+      title: "Updated value",
+      description: "Make sure to commit to save the image",
+    });
+  };
+
+  const deleteRole = (id: string) => {
+    setRolesState((prev) => {
+      const { [id]: _deleted, ...rest } = prev;
+
+      return rest;
+    });
+  };
+
+  const addRole = () => {
+    setRolesState((prev) => ({
+      [Date.now().toString()]: {
+        addable: false,
+        image: "",
+        isEvil: false,
+        name: "",
+        order: 0,
+        prefix: "feminimum",
+        state: "night",
+        type: "player",
+      },
+      ...Object.entries(prev).reduce<RolesState>(
+        (acc, [id, role]) => ({
+          ...acc,
+          [id]: { ...role, order: role.order + 1 },
+        }),
+        {}
+      ),
+    }));
   };
 
   const commit = async () => {
     setLoading(true);
-    await updateRoles(Object.values(rolesState));
+    await updateRoles(rolesState);
     setLoading(false);
+
+    toast({
+      variant: "default",
+      title: "Updated roles",
+      description: "Roles json file has been updated",
+    });
   };
 
   return (
     <div className="flex flex-col gap-6">
-      <Button onClick={() => commit()} className="flex gap-2 self-end">
-        {loading ? <Spinner size={20} /> : <SaveIcon size={20} />}
-        Commit
-      </Button>
+      <div className="flex gap-4 justify-end">
+        <Button variant="secondary" asChild>
+          <Link target="_blank" href="/api/blob/roles">
+            view raw json
+          </Link>
+        </Button>
 
-      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-        {Object.entries(rolesState).map(([key, role]) => (
-          <RolesCard
-            key={key}
-            role={role}
-            combineOptions={playerRoles.map(({ name }) => name)}
-            onRoleChange={(role) => updateRole(key, role)}
-          />
-        ))}
+        <Button className="flex gap-2" variant="secondary" onClick={addRole}>
+          <PlusIcon size={20} /> add role
+        </Button>
+
+        <Button onClick={() => commit()} className="flex gap-2 self-end">
+          {loading ? <Spinner size={20} /> : <SaveIcon size={20} />}
+          commit
+        </Button>
+      </div>
+
+      <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4 pb-8">
+        {Object.entries(rolesState)
+          .sort(([, a], [, b]) => a.order - b.order)
+          .map(([key, role], index) => (
+            <RolesCard
+              key={key}
+              index={index}
+              role={role}
+              combineOptions={playerRoles
+                .map(({ name }) => name)
+                .filter((name) => name.trim().length)}
+              onRoleDelete={() => deleteRole(key)}
+              onRoleChange={(role) => updateRole(key, role)}
+            />
+          ))}
       </div>
     </div>
   );

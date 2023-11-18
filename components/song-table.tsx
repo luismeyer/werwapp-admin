@@ -202,7 +202,7 @@ export function SongTable({ songData }: SongTableProps) {
           onClick={() => props.table.previousPage()}
           disabled={!props.table.getCanPreviousPage()}
         >
-          Previous
+          previous
         </Button>
 
         <Button
@@ -211,7 +211,7 @@ export function SongTable({ songData }: SongTableProps) {
           onClick={() => props.table.nextPage()}
           disabled={!props.table.getCanNextPage()}
         >
-          Next
+          next
         </Button>
       </div>
     );
@@ -224,7 +224,7 @@ export function SongTable({ songData }: SongTableProps) {
       initialSortingState={[{ desc: true, id: "id" }]}
       topRightSlot={Pagination}
       pagination
-      globelFilterPlaceholder="Filter songs..."
+      globelFilterPlaceholder="filter songs..."
     />
   );
 }
