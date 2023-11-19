@@ -4,6 +4,7 @@ import { put } from "@vercel/blob";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
 import { RoleDefRecord } from "./roles";
+import { getRolesPathname } from "./pathnames";
 
 export async function updateRoles(roles: RoleDefRecord) {
   const session = await getServerSession();
@@ -12,7 +13,7 @@ export async function updateRoles(roles: RoleDefRecord) {
     return;
   }
 
-  await put("roles.json", JSON.stringify(roles, null, 2), {
+  await put(getRolesPathname(), JSON.stringify(roles, null, 2), {
     access: "public",
     addRandomSuffix: false,
     cacheControlMaxAge: 0,

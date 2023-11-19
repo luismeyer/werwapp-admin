@@ -3,7 +3,7 @@
 import { put } from "@vercel/blob";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { getPathname } from "./get-translations";
+import { getTranslationsPathname } from "./pathnames";
 
 export async function updateTranslations(
   locale: string,
@@ -15,11 +15,15 @@ export async function updateTranslations(
     return;
   }
 
-  await put(getPathname(locale), JSON.stringify(translations, null, 2), {
-    access: "public",
-    addRandomSuffix: false,
-    cacheControlMaxAge: 0,
-  });
+  await put(
+    getTranslationsPathname(locale),
+    JSON.stringify(translations, null, 2),
+    {
+      access: "public",
+      addRandomSuffix: false,
+      cacheControlMaxAge: 0,
+    }
+  );
 
   revalidatePath("/translations");
   revalidatePath("/api/translations");

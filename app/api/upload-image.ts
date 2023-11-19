@@ -2,6 +2,7 @@
 
 import { put } from "@vercel/blob";
 import { getServerSession } from "next-auth";
+import { getRolesImagePathname } from "./pathnames";
 
 export async function uploadImage(form: FormData) {
   const name = form.get("name");
@@ -17,7 +18,8 @@ export async function uploadImage(form: FormData) {
     return;
   }
 
-  const { url } = await put(`roles/${name.toString()}`, image, {
+  const pathname = getRolesImagePathname(name.toString());
+  const { url } = await put(pathname, image, {
     access: "public",
     addRandomSuffix: false,
     cacheControlMaxAge: 0,
