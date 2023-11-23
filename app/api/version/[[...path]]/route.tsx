@@ -1,6 +1,6 @@
 import { isUnauthorized, unauthorized } from "../../werwapp-auth";
 import { getVersion } from "../../get-version";
-import { getPathname, getVersionPathname } from "../../pathnames";
+import { getPathname } from "../../pathnames";
 
 type Params = { params: { path: string[] } };
 
