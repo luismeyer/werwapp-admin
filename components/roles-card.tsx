@@ -24,7 +24,7 @@ import {
 } from "./ui/select";
 import { Switch } from "./ui/switch";
 import { useRef } from "react";
-import { uploadImage } from "@/app/api/upload-image";
+import { uploadImage } from "@/app/api/actions/upload-image";
 
 type RolesCardProps = {
   combineOptions: string[];

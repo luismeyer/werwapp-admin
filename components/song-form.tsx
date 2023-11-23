@@ -1,6 +1,6 @@
 "use client";
 
-import { createSong } from "@/app/api/create-song";
+import { createSong } from "@/app/api/actions/create-song";
 
 import { Input } from "./ui/input";
 import {

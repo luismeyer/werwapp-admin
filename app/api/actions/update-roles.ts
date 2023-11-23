@@ -1,10 +1,11 @@
 "use server";
 
-import { put } from "@vercel/blob";
 import { getServerSession } from "next-auth";
 import { revalidatePath } from "next/cache";
-import { RoleDefRecord } from "./roles";
-import { getRolesPathname } from "./pathnames";
+import { RoleDefRecord } from "../roles";
+import { getRolesPathname } from "../pathnames";
+import { kv } from "@vercel/kv";
+import { updateVersion } from "../update-version";
 
 export async function updateRoles(roles: RoleDefRecord) {
   const session = await getServerSession();
@@ -13,11 +14,11 @@ export async function updateRoles(roles: RoleDefRecord) {
     return;
   }
 
-  await put(getRolesPathname(), JSON.stringify(roles, null, 2), {
-    access: "public",
-    addRandomSuffix: false,
-    cacheControlMaxAge: 0,
-  });
+  const pathname = getRolesPathname();
+
+  await kv.json.set(pathname, "$", roles);
+
+  await updateVersion(pathname);
 
   revalidatePath("/roles");
   revalidatePath("/api/roles");

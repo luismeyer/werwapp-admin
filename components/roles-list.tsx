@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { PlayerRoleDef, RoleDef } from "@/app/api/roles";
-import { updateRoles } from "@/app/api/update-roles";
+import { updateRoles } from "@/app/api/actions/update-roles";
 
 import { Button } from "./ui/button";
 import { Spinner } from "./ui/spinner";
@@ -89,12 +89,6 @@ export function RolesList({ roles }: RolesListProps): JSX.Element {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex gap-4 justify-end">
-        <Button variant="secondary" asChild>
-          <Link target="_blank" href="/api/blob/roles">
-            view raw json
-          </Link>
-        </Button>
-
         <Button className="flex gap-2" variant="secondary" onClick={addRole}>
           <PlusIcon size={20} /> add role
         </Button>

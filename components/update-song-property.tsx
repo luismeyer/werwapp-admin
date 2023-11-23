@@ -2,7 +2,7 @@
 
 import { KeyboardEvent, useState } from "react";
 
-import { updateSong } from "@/app/api/update-song";
+import { updateSong } from "@/app/api/actions/update-song";
 
 import { Input } from "./ui/input";
 import {

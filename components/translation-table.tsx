@@ -4,7 +4,7 @@ import { ArrowUpDown, MoreHorizontal, SaveIcon, TrashIcon } from "lucide-react";
 import Link from "next/link";
 import { useMemo, useRef, useState } from "react";
 
-import { updateTranslations } from "@/app/api/update-translations";
+import { updateTranslations } from "@/app/api/actions/update-translations";
 import { ColumnDef, Table } from "@tanstack/react-table";
 
 import { Button } from "./ui/button";
@@ -165,12 +165,6 @@ export function TranslationTable({
       columns={columns}
       topRightSlot={({ table }) => (
         <div className="flex gap-2">
-          <Button asChild variant="secondary">
-            <Link target="_blank" href={`/api/blob/translations/${locale}`}>
-              view raw json
-            </Link>
-          </Button>
-
           <Button onClick={() => handleSubmit(table)} className="flex gap-2">
             {loading ? <Spinner size={20} /> : <SaveIcon size={20} />}
             commit

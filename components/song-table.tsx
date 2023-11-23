@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import { useRef, useState } from "react";
 
-import { deleteSong } from "@/app/api/delete-song";
+import { deleteSong } from "@/app/api/actions/delete-song";
 import { ColumnDef, Table } from "@tanstack/react-table";
 
 import { Button } from "./ui/button";

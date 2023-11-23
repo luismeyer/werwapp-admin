@@ -2,7 +2,7 @@
 
 import { put } from "@vercel/blob";
 import { getServerSession } from "next-auth";
-import { getRolesImagePathname } from "./pathnames";
+import { getRolesImagePathname } from "../pathnames";
 
 export async function uploadImage(form: FormData) {
   const name = form.get("name");
