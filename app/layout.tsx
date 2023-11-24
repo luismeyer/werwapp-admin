@@ -18,11 +18,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="fixed bg-white w-screen z-10 p-2 flex justify-center shadow-sm">
+        <div className="fixed z-50 bg-white w-screen p-2 flex justify-center shadow-sm">
           <Navigation />
         </div>
 
-        <div className="w-screen pt-28 px-12">{children}</div>
+        <div className="h-screen w-screen pt-28 px-12">{children}</div>
 
         <Toaster />
       </body>
