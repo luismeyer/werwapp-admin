@@ -1,7 +1,7 @@
 const base = process.env.VERCEL_ENV === "production" ? "" : "staging";
 
 export function getPathname(pathname: string) {
-  return base + pathname;
+  return (base.length ? base + "/" : base) + pathname;
 }
 
 export function getRolesPathname() {

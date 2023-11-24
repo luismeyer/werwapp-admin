@@ -24,7 +24,7 @@ import {
 } from "./ui/select";
 import { Switch } from "./ui/switch";
 import { useRef } from "react";
-import { uploadImage } from "@/app/api/actions/upload-image";
+import { ImageUpload } from "./image-upload";
 
 type RolesCardProps = {
   combineOptions: string[];
@@ -75,50 +75,11 @@ export function RolesCard({
 
   return (
     <Card className="overflow-hidden">
-      <input
-        ref={imageRef}
-        hidden
-        multiple={false}
-        type="file"
-        name="image"
-        onChange={async (event) => {
-          const [file] = event.target.files ?? [];
-
-          const [ext] = /(?:\.([^.]+))?$/.exec(file.name) ?? [];
-
-          if (!ext) {
-            return;
-          }
-
-          const form = new FormData();
-          form.set("image", file);
-          form.set("name", `${role.name}${ext}`);
-
-          const url = await uploadImage(form);
-
-          onRoleChange({ ...role, image: url });
-        }}
+      <ImageUpload
+        index={index}
+        onUploadSuccess={(url) => onRoleChange({ ...role, image: url })}
+        role={role}
       />
-
-      {role.image.length ? (
-        <Image
-          className="cursor-pointer"
-          priority={index <= 3}
-          draggable={false}
-          alt={`image of ${role.name}`}
-          src={role.image}
-          width={300}
-          height={300}
-          onClick={upload}
-        />
-      ) : (
-        <button
-          onClick={upload}
-          className="w-full aspect-square bg-gray-100 flex justify-center items-center cursor-pointer"
-        >
-          <span>upload avatar image</span>
-        </button>
-      )}
 
       <CardHeader>
         <CardTitle className="grid gap-2">
