@@ -27,7 +27,7 @@ function Item({ hovered, setHovered, name, index }: ItemProps) {
           hovered !== index && hovered !== 0 && "w-0"
         )}
       >
-        <Image className="object-cover" fill alt={name} src={`/${name}.png`} />
+        <Image className="object-cover" fill alt={name} src={`/${name}.jpg`} />
       </div>
 
       <Button
