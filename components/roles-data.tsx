@@ -7,9 +7,5 @@ export async function RolesData() {
 
   const roles = RoleDefRecordSchema.parse(data);
 
-  return (
-    <div>
-      <RolesList roles={roles} />
-    </div>
-  );
+  return <RolesList roles={roles} />;
 }

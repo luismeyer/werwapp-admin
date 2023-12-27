@@ -2,7 +2,6 @@ import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { RolesData } from "@/components/roles-data";
 import { Suspense } from "react";
-import { kv } from "@vercel/kv";
 
 export default async function RolesPage() {
   const session = await getServerSession();

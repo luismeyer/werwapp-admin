@@ -22,6 +22,7 @@ export async function updateTranslations(
 
   await updateVersion(pathname);
 
+  revalidatePath("/version");
   revalidatePath("/translations");
   revalidatePath("/api/translations");
 }

@@ -20,6 +20,7 @@ export async function updateRoles(roles: RoleDefRecord) {
 
   await updateVersion(pathname);
 
+  revalidatePath("/version");
   revalidatePath("/roles");
   revalidatePath("/api/roles");
 }
