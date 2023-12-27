@@ -1,10 +1,11 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { getTranslationsPathname } from "../pathnames";
 import { kv } from "@vercel/kv";
 import { updateVersion } from "../update-version";
+import { TranslationsCacheTag } from "../cache";
 
 export async function updateTranslations(
   locale: string,
@@ -22,7 +23,7 @@ export async function updateTranslations(
 
   await updateVersion(pathname);
 
-  revalidatePath("/version");
   revalidatePath("/translations");
-  revalidatePath("/api/translations");
+
+  revalidateTag(TranslationsCacheTag);
 }

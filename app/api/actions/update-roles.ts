@@ -1,11 +1,12 @@
 "use server";
 
 import { getServerSession } from "next-auth";
-import { revalidatePath } from "next/cache";
+import { revalidatePath, revalidateTag } from "next/cache";
 import { RoleDefRecord } from "../roles";
 import { getRolesPathname } from "../pathnames";
 import { kv } from "@vercel/kv";
 import { updateVersion } from "../update-version";
+import { RolesCacheTag } from "../cache";
 
 export async function updateRoles(roles: RoleDefRecord) {
   const session = await getServerSession();
@@ -20,7 +21,7 @@ export async function updateRoles(roles: RoleDefRecord) {
 
   await updateVersion(pathname);
 
-  revalidatePath("/version");
   revalidatePath("/roles");
-  revalidatePath("/api/roles");
+
+  revalidateTag(RolesCacheTag);
 }
